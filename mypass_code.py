@@ -1,11 +1,17 @@
 from tkinter import *
 from tkinter import messagebox
 import pyperclip
+import json
 
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 #Password Generator Project
 from random import choice, randint,shuffle
+def search():
+    website = website_entry.get()
+    user = username_box.get()
+    password = password_box.get()
+
 def generate():
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
@@ -37,16 +43,22 @@ def save():
     if len(password) == 0 or len(name_of_website) == 0:
         messagebox.showinfo(title="ERROR",message="Please make sure you have filled every entry.");
     else:
-        is_ok = messagebox.askokcancel(title=name_of_website,message=f"These are the details entered:\nEmail:{name_of_user}\nPassword:{password}.\nIs it ok to save?")
-        if is_ok:
-            entry = open("data.txt", "a")
-            entry.write(f"\n{name_of_website}|{name_of_user}|{password}")
-            entry.write("\n............")
-            entry.close()
-            print("Data saved.")
-            website_box.delete(0,END)
+            else:
+        try:
+           with open("data.json", "w") as data_file:
+               data = json.load(data_file)
+        except FileNotFoundError:
+            with open("data.json", "w") as data_file:
+                json.dump(new_data, data_file, indent=4)
+        else:
+            #updating the old data with new data.
+            data.update(new_data)
+            with open("data.json", "w") as data_file:
+                #Saving updated data
+                json.dump(data, data_file, indent=4)
+        finally:
+            website_entry.delete(0, END)
             password_box.delete(0, END)
-
 
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
@@ -68,6 +80,7 @@ password_box = Entry(width=36)
 generate_password = Button(text="Generate Password", width=18,command=generate)
 add = Button(text="Add", width=18, command=save)
 username_box.insert(0, "kavi@email.com")
+search = Button(text="Search",width=18,)
 
 
 canvas.grid(row=0, column=1)
@@ -80,6 +93,6 @@ generate_password.grid(row=3, column=2)
 add.grid(row=4, column=0, columnspan=3)
 password_box.grid(row=3, column=1, columnspan=2)
 website_box.grid(row=1, column=1, columnspan=2)
-
+search.grid(row=1,column=3)
 
 window.mainloop()
